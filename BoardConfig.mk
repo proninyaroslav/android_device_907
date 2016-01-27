@@ -48,16 +48,18 @@ TARGET_ARCH_LOWMEM := true
 BOARD_HAVE_BLUETOOTH := true
 BOARD_HAVE_BLUETOOTH_BCM := true
 BLUETOOTH_HCI_USE_USB := true
-BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/softwinner/907/bluetooth
-BOARD_BLUEDROID_VENDOR_CONF := device/softwinner/907/bluetooth/vnd_generic_usb.txt
-BOARD_HAS_VIBRATOR_IMPLEMENTATION := ../../device/softwinner/907/vibrator.c
+BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/softwinner/907/hardware/bluetooth
+BOARD_BLUEDROID_VENDOR_CONF := device/softwinner/907/hardware/bluetooth/vnd_generic_usb.txt
+BOARD_BLUETOOTH_DOES_NOT_USE_RFKILL := true
+TARGET_NEEDS_BLUETOOTH_INIT_DELAY := true
+BOARD_HAS_VIBRATOR_IMPLEMENTATION := ../../device/softwinner/907/hardware/include/vibrator.c
 
 # Partition sizes; must be in decimal
 TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_BOOTIMAGE_PARTITION_SIZE := 33554432
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 33554432
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 369440104
-BOARD_USERDATAIMAGE_PARTITION_SIZE := 1000737176
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 402653184
+BOARD_USERDATAIMAGE_PARTITION_SIZE := 1073741824
 BOARD_FLASH_BLOCK_SIZE := 4096
 
 # EGL stuff
@@ -67,7 +69,6 @@ BOARD_EGL_WORKAROUND_BUG_10194508 := true
 USE_OPENGL_RENDERER := true
 ENABLE_WEBGL := true
 BOARD_USE_SKIA_LCDTEXT := true
-BOARD_EGL_NEEDS_FNW := true
 BOARD_EGL_NEEDS_LEGACY_FB := true
 BOARD_NO_ALLOW_DEQUEUE_CURRENT_BUFFER := true
 
@@ -75,21 +76,22 @@ BOARD_NO_ALLOW_DEQUEUE_CURRENT_BUFFER := true
 TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
 
 # Bootanimation stuff
-#TARGET_BOOTANIMATION_PRELOAD := true
-#TARGET_BOOTANIMATION_TEXTURE_CACHE := true
-#TARGET_BOOTANIMATION_USE_RGB565 := true
+TARGET_BOOTANIMATION_PRELOAD := true
+TARGET_BOOTANIMATION_TEXTURE_CACHE := true
+TARGET_BOOTANIMATION_USE_RGB565 := true
 
 # Audio & Camera & Cedarx
 CEDARX_CHIP_VERSION := F23
 CEDARX_USE_SWAUDIO := N
 
 # CWM Recovery
-BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/softwinner/907/recovery_keys.c
+BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/softwinner/907/recovery/recovery_keys.c
 BOARD_UMS_LUNFILE := "/sys/class/android_usb/android0/f_mass_storage/lun/file"
 BOARD_UMS_2ND_LUNFILE := "/sys/class/android_usb/android0/f_mass_storage/lun1/file"
 RECOVERY_FSTAB_VERSION := 2
 BOARD_RECOVERY_SWIPE := true
 TARGET_RECOVERY_FSTAB := device/softwinner/907/rootdir/fstab.sun4i
+BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_23x41.h\"
 #TARGET_RECOVERY_PIXEL_FORMAT := "BGRA_8888"
 #TARGET_RECOVERY_UI_LIB := librecovery_ui_crane_evb
 #TARGET_RECOVERY_UPDATER_LIBS :=
@@ -123,21 +125,21 @@ TARGET_RECOVERY_PRE_COMMAND := "echo -n boot-recovery | busybox dd of=/dev/block
 BOARD_USE_LEGACY_TOUCHSCREEN := true
 TARGET_RELEASETOOL_OTA_FROM_TARGET_SCRIPT := device/softwinner/907/releasetools/907_ota_from_target_files
 # Hardware module include file path
-TARGET_HARDWARE_INCLUDE := $(TOP)/device/softwinner/907/libraries/include
+TARGET_HARDWARE_INCLUDE := $(TOP)/device/softwinner/907/hardware/include
 # Use our own init.rc
 TARGET_PROVIDES_INIT_RC := true
 
 # Wifi stuff
 BOARD_WIFI_VENDOR                := realtek
 WPA_SUPPLICANT_VERSION           := VER_0_8_X
-BOARD_WPA_SUPPLICANT_DRIVER      := WEXT
+BOARD_WPA_SUPPLICANT_DRIVER      := NL80211
 BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_rtl
-BOARD_HOSTAPD_DRIVER             := WEXT
+BOARD_HOSTAPD_DRIVER             := NL80211
 BOARD_HOSTAPD_PRIVATE_LIB        := lib_driver_cmd_rtl
 BOARD_WLAN_DEVICE                := rtl8192cu
 SW_BOARD_USR_WIFI                := rtl8192cu
 
-WIFI_DRIVER_MODULE_NAME   := 8192cu
+WIFI_DRIVER_MODULE_NAME   := "8192cu"
 WIFI_DRIVER_MODULE_PATH   := "/system/lib/modules/8192cu.ko"
 
 WIFI_DRIVER_MODULE_ARG    := ""
@@ -156,26 +158,28 @@ BOARD_SEPOLICY_DIRS += \
 BOARD_SEPOLICY_UNION += \
     app.te \
     device.te \
+    dhcp.te \
     domain.te \
     drmserver.te \
     file.te \
     file_contexts \
+    healthd.te \
+    init.te \
+    mac_update.te \
+    mount.te \
+    netd.te \
+    rild.te \
     surfaceflinger.te \
     system.te \
-    rild.te \
+    ueventd.te \
+    untrusted_app.te \
     vold.te \
     wpa_supplicant.te \
+    zygote.te \
 
 # Beware: set only prebuilt OR source+config
 TARGET_PREBUILT_KERNEL := device/softwinner/907/kernel
 BOARD_KERNEL_BASE := 0x40000000
-BOARD_KERNEL_CMDLINE := console=ttyS0,115200 rw init=/init loglevel=8 androidboot.selinux=permissive
-
-# G-Sensor Stuff
-SW_BOARD_USES_GSENSOR_TYPE := "bma250"
-SW_BOARD_GSENSOR_DIRECT_X  := "true"
-SW_BOARD_GSENSOR_DIRECT_Y  := "true"
-SW_BOARD_GSENSOR_DIRECT_Z  := "true"
-SW_BOARD_GSENSOR_XY_REVERT := "true"
+BOARD_KERNEL_CMDLINE := console=ttyS0,115200 rw init=/init loglevel=5 androidboot.selinux=permissive
 
 COMMON_GLOBAL_CFLAGS += "-DICS_CAMERA_BLOB -DICS_AUDIO_BLOB"
